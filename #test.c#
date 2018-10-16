@@ -1,0 +1,38 @@
+#include<stdio.h>
+#include<sdtlib.h>
+
+struct caseTerrain
+{
+  int posX;
+  int posY;
+  int etat;
+  char  contenu;
+}caseTerrain;
+
+int main(int argv, char** argc)
+{
+  FILE* f;
+  int i, n = 0;
+  struct caseTerrain terrain[4];
+  f = fopen("toto.txt", "r");
+  if (f == NULL)
+    return 1;
+  while(fread(terrain + n, 1, sizeof(struct caseTerrain), f))
+    n++;
+  for (i = 0 ; i < n ; i++)
+    printf("%s %d\n", caseTerrain[i].etat, caseTerrain[i].contenu);
+  fclose(f);
+  return 0;
+}
+/* creatTerrain(int t){
+ 
+ struct caseTerrain terrain[taille*taille];
+ 
+}
+int main(){
+  
+  int taille;
+  int i;
+  printf("bonjour veuillez saisir la taille du terrain ?");
+  scanf("%d",&taille);
+  creatTerrain(taille);*/
