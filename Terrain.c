@@ -8,6 +8,10 @@
 #include<stdlib.h>
 #include<time.h>
 
+#define C_VIDE 0
+#define C_BOMBE 1
+#define C_FLAG 2
+
 #define FICH_TAB_ENCOURS "terrain.txt"
 #define FICH_TAB_PRECEDENT "terrain_precedent.txt"
 
@@ -20,21 +24,23 @@ typedef struct caseTerrain
 }caseTerrain;
 
 void initTabBombe(int* t, int n, int nbbombe)
+/*Fonction qui va crée un tableau d'entier en placant le bon nombre de bombe dans un tableau d'entier*/
 {
     if (n > 0)
     {
         if(nbbombe>0){
-            *t = 1;
+            *t = C_BOMBE;
             initTabBombe(t + 1, n - 1, nbbombe - 1);
         }
         else{
-            *t = 0;
+            *t = C_VIDE;
             initTabBombe(t + 1, n - 1, nbbombe);
         }
     }
 }
 
 void printTab(int* t, int n)
+/*Fonction qui affiche un tableau (pour les tests)*/
 {
     if (n > 0)
     {
@@ -45,20 +51,22 @@ void printTab(int* t, int n)
         printf("\n");
 }
 void printTerrain(caseTerrain* t, int taille, int largeur)
+/*Fonction qui affiche un terrain (pour les tests)*/
 {
-    if ( taille%4==0)
-    printf("\n");
+    if ( taille%largeur==0)
+    printf(" largeur = %d\n", largeur);
     
     if ( taille> 0)
     {
         printf("%d-%d(%d:%d) ", t->etat, t->contenu, t->posX, t->posY);
-        printTerrain(t + 1, taille - 1, largeur-1);
+        printTerrain(t + 1, taille - 1, largeur);
     }
     else
         printf("\n");
 }
 
 void melangeTabBombe(int* t, int n)
+/*fonction qui melange le tableau de bombe*/
 {
     int i, j;
     int temp;
@@ -79,21 +87,28 @@ void CreateTerrain(caseTerrain* terrain, int hauteur, int largeur, int nbBombe){
     int taille = hauteur*largeur;
     int* tab = (int*)malloc(sizeof(int)*taille);
     
-    initTabBombe(tab,taille, nbBombe);
-    printTab(tab, taille);
-    melangeTabBombe(tab,taille);
-    printTab(tab, taille);
+    initTabBombe(tab,taille, nbBombe);//initialisation d'un tableau avec le bon nombre de bombe
+    printTab(tab, taille);//affichage pour les tests
+    melangeTabBombe(tab,taille);//on melange le tableau de bombe aléatoirement
+    printTab(tab, taille);//affichage pour les tests
     
+    /*On prend les elements du tableau de bombe melange pour remplir le terrain*/
     for(i=0;i<hauteur;i++){
         for(j=0;j<largeur;j++){
-            terrain[(i*largeur)+j].posX=i;
-            terrain[(i*largeur)+j].posY=j;
-            terrain[(i*largeur)+j].etat=0;
-            terrain[(i*largeur)+j].contenu= *(tab+cptBombe);
+//            terrain[(i*hauteur)+j].posX=i;
+//            terrain[(i*hauteur)+j].posY=j;
+//            terrain[(i*hauteur)+j].etat=0;
+//            terrain[(i*hauteur)+j].contenu= *(tab+cptBombe);
+//            cptBombe++;
+            (terrain+cptBombe)->posX=i;
+            (terrain+cptBombe)->posY=j;
+            (terrain+cptBombe)->etat=0;
+            (terrain+cptBombe)->contenu= *(tab+cptBombe);
             cptBombe++;
         }
     }
-    printf("Terrain crée\n");
+    
+    printf("Terrain crée\n");//message pour les tests
     //free(tab);
     printTerrain(terrain,hauteur*largeur,largeur);
 }
@@ -136,16 +151,13 @@ int main(){
     scanf("%d", &hauteur);
     printf("Veuillez saisir la largeur du tableau : ");
     scanf("%d", &largeur);
-    printf("Veuillez saisir le nombre de bombe (inferieur à %d): ", hauteur*largeur-1);
+    printf("Veuillez saisir le nombre de bombe (inferieur à %d x %d ): ", hauteur, largeur);
     scanf("%d", &nbBombe);
     
-    //caseTerrain terrain[hauteur*largeur];
     caseTerrain* terrain= (caseTerrain*)malloc(sizeof(caseTerrain)*hauteur*largeur);
     
     CreateTerrain(terrain, hauteur, largeur, nbBombe);
-    
     SauvegardeTerrainEncours(terrain, hauteur, largeur );
-    
     AfficheTerrainEncours(hauteur, largeur);
     
     
