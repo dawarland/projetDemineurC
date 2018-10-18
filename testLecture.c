@@ -52,3 +52,5 @@ int main(){
   printf("bonjour veuillez saisir la taille du terrain ?");
   scanf("%d",&taille);
   creatTerrain(taille);*/
+
+//test
