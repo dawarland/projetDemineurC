@@ -8,9 +8,6 @@
 #include<stdlib.h>
 #include<time.h>
 
-#include "Terrain.h"
-#include "CaseTerrain.h"
-
 #define FICH_TAB_ENCOURS "terrain.txt"
 #define FICH_TAB_PRECEDENT "terrain_precedent.txt"
 
@@ -54,7 +51,7 @@ void printTerrain(caseTerrain* t, int taille, int largeur)
     
     if ( taille> 0)
     {
-        printf("%d-%d ", t->etat, t->contenu);
+        printf("%d-%d(%d:%d) ", t->etat, t->contenu, t->posX, t->posY);
         printTerrain(t + 1, taille - 1, largeur-1);
     }
     else
@@ -87,24 +84,25 @@ void CreateTerrain(caseTerrain* terrain, int hauteur, int largeur, int nbBombe){
     melangeTabBombe(tab,taille);
     printTab(tab, taille);
     
-    for(i=0;i<largeur;i++){
-        for(j=0;j<hauteur;j++){
-            terrain[i+j].posX=i;
-            terrain[i+j].posY=j;
-            terrain[i+j].etat=0;
-            terrain[i+j].contenu= *(tab+cptBombe);
+    for(i=0;i<hauteur;i++){
+        for(j=0;j<largeur;j++){
+            terrain[(i*largeur)+j].posX=i;
+            terrain[(i*largeur)+j].posY=j;
+            terrain[(i*largeur)+j].etat=0;
+            terrain[(i*largeur)+j].contenu= *(tab+cptBombe);
             cptBombe++;
         }
     }
     printf("Terrain crée\n");
     //free(tab);
+    printTerrain(terrain,hauteur*largeur,largeur);
 }
 
 int SauvegardeTerrainEncours(caseTerrain* terrain,int hauteur, int largeur){
     FILE* f = fopen(FICH_TAB_ENCOURS, "w");
     if (f == NULL)
         return 1;
-    fwrite(terrain, hauteur*largeur , sizeof(struct caseTerrain), f);
+    fwrite(terrain, 1, sizeof(caseTerrain)*hauteur*largeur, f);
     fclose(f);
     printf("Terrain sauvegardé\n");
     return 0;
