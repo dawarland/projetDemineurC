@@ -2,26 +2,13 @@
 //  Terrain.c
 //  
 //
-//  Created by Williams ARLAND on 17/10/2018.
+//
 //
 #include<stdio.h>
 #include<stdlib.h>
 #include<time.h>
 
-#define C_VIDE 0
-#define C_BOMBE 1
-#define C_FLAG 2
-
-#define FICH_TAB_ENCOURS "terrain.txt"
-#define FICH_TAB_PRECEDENT "terrain_precedent.txt"
-
-typedef struct caseTerrain
-{
-    int posX;
-    int posY;
-    int etat;
-    int  contenu;
-}caseTerrain;
+#include "Demineur.h"
 
 void initTabBombe(int* t, int n, int nbbombe)
 /*Fonction qui va crée un tableau d'entier en placant le bon nombre de bombe dans un tableau d'entier*/
@@ -50,19 +37,48 @@ void printTab(int* t, int n)
     else
         printf("\n");
 }
-void printTerrain(caseTerrain* t, int taille, int largeur)
+void printTerrainTest(caseTerrain* t, int taille, int largeur)
 /*Fonction qui affiche un terrain (pour les tests)*/
 {
     if ( taille%largeur==0)
-    printf(" largeur = %d\n", largeur);
+        printf("\n");
     
     if ( taille> 0)
     {
         printf("%d-%d(%d:%d) ", t->etat, t->contenu, t->posX, t->posY);
-        printTerrain(t + 1, taille - 1, largeur);
+        printTerrainTest(t + 1, taille - 1, largeur);
     }
     else
         printf("\n");
+}
+
+void printTerrainJeux(caseTerrain* t, int hauteur, int largeur)
+/*Fonction qui affiche un terrain pour la partie*/
+{
+    int cptLargeur;
+    int cptHauteur;
+    for(cptHauteur=0;cptHauteur<=hauteur+1; cptHauteur++){
+        if(cptHauteur==0){
+            printf("   |");
+            for(cptLargeur=0;cptLargeur<largeur; cptLargeur++){
+                printf(" %c |",cptLargeur+65);
+            }
+        }
+        else if(cptHauteur==1){
+            printf("----");
+            for(cptLargeur=0;cptLargeur<largeur; cptLargeur++){
+                printf("----");
+            }
+        }
+        else{
+            printf(" %d |", cptHauteur-1);
+            for(cptLargeur=0;cptLargeur<largeur; cptLargeur++){
+                printf(" %d |",(t+(cptHauteur*hauteur+cptLargeur))->etat);
+            }
+        }
+         printf("\n");
+    }
+    
 }
 
 void melangeTabBombe(int* t, int n)
@@ -81,7 +97,7 @@ void melangeTabBombe(int* t, int n)
         *(t+j) = temp;
     }
 }
-void CreateTerrain(caseTerrain* terrain, int hauteur, int largeur, int nbBombe){
+void createTerrain(caseTerrain* terrain, int hauteur, int largeur, int nbBombe){
     int i, j;
     int cptBombe =0;
     int taille = hauteur*largeur;
@@ -95,25 +111,19 @@ void CreateTerrain(caseTerrain* terrain, int hauteur, int largeur, int nbBombe){
     /*On prend les elements du tableau de bombe melange pour remplir le terrain*/
     for(i=0;i<hauteur;i++){
         for(j=0;j<largeur;j++){
-//            terrain[(i*hauteur)+j].posX=i;
-//            terrain[(i*hauteur)+j].posY=j;
-//            terrain[(i*hauteur)+j].etat=0;
-//            terrain[(i*hauteur)+j].contenu= *(tab+cptBombe);
-//            cptBombe++;
             (terrain+cptBombe)->posX=i;
             (terrain+cptBombe)->posY=j;
-            (terrain+cptBombe)->etat=0;
+            (terrain+cptBombe)->etat=C_FERMEE;
             (terrain+cptBombe)->contenu= *(tab+cptBombe);
             cptBombe++;
         }
     }
     
     printf("Terrain crée\n");//message pour les tests
-    //free(tab);
-    printTerrain(terrain,hauteur*largeur,largeur);
+    printTerrainTest(terrain,hauteur*largeur,largeur);
 }
 
-int SauvegardeTerrainEncours(caseTerrain* terrain,int hauteur, int largeur){
+int sauvegardeTerrainEncours(caseTerrain* terrain,int hauteur, int largeur){
     FILE* f = fopen(FICH_TAB_ENCOURS, "w");
     if (f == NULL)
         return 1;
@@ -124,7 +134,28 @@ int SauvegardeTerrainEncours(caseTerrain* terrain,int hauteur, int largeur){
     
 }
 
-int AfficheTerrainEncours(int hauteur, int largeur){
+int afficheTerrainPrecedentTest(int hauteur, int largeur){
+    int i, j, n = 0;
+    
+    FILE* f = fopen(FICH_TAB_PRECEDENT, "r");
+    if (f == NULL){
+        printf("impossible d'ouvrir le terrain");
+        return 1;
+    }
+    printf("Affichage terrain : \n");
+    caseTerrain* terrain = (caseTerrain*)malloc(sizeof(caseTerrain)*hauteur*largeur);
+    while(fread(terrain + n, 1, sizeof(caseTerrain), f)){
+        
+        //printf("%d-%d ", terrain[n].etat, terrain[n].contenu);
+        n++;
+    }
+    printTerrainTest(terrain, largeur*hauteur , largeur);
+    fclose(f);
+    return 0;
+    
+}
+
+int afficheTerrainEncoursTest(int hauteur, int largeur){
     int i, j, n = 0;
     
     FILE* f = fopen(FICH_TAB_ENCOURS, "r");
@@ -139,27 +170,9 @@ int AfficheTerrainEncours(int hauteur, int largeur){
         //printf("%d-%d ", terrain[n].etat, terrain[n].contenu);
         n++;
     }
-    printTerrain(terrain, largeur*hauteur , largeur);
+    printTerrainTest(terrain, largeur*hauteur , largeur);
+    printTerrainJeux(terrain, hauteur , largeur);
     fclose(f);
     return 0;
     
-}
-
-int main(){
-    int hauteur, largeur, nbBombe;
-    printf("Veuillez saisir la hauteur du tableau : ");
-    scanf("%d", &hauteur);
-    printf("Veuillez saisir la largeur du tableau : ");
-    scanf("%d", &largeur);
-    printf("Veuillez saisir le nombre de bombe (inferieur à %d x %d ): ", hauteur, largeur);
-    scanf("%d", &nbBombe);
-    
-    caseTerrain* terrain= (caseTerrain*)malloc(sizeof(caseTerrain)*hauteur*largeur);
-    
-    CreateTerrain(terrain, hauteur, largeur, nbBombe);
-    SauvegardeTerrainEncours(terrain, hauteur, largeur );
-    AfficheTerrainEncours(hauteur, largeur);
-    
-    
-    return 0;
 }
