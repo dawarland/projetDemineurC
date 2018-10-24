@@ -73,7 +73,16 @@ void printTerrainJeux(caseTerrain* t, int hauteur, int largeur)
         else{
             printf(" %d |", cptHauteur-1);
             for(cptLargeur=0;cptLargeur<largeur; cptLargeur++){
-                printf(" %d |",(t+(cptHauteur*hauteur+cptLargeur))->etat);
+                if( (t+(cptHauteur*hauteur+cptLargeur))->etat == C_OUVERTE){
+                    if( (t+(cptHauteur*hauteur+cptLargeur))->contenu == C_BOMBE)
+                        printf(" B |");
+                    else
+                        printf(" %d |",(t+(cptHauteur*hauteur+cptLargeur))->contenu);
+                }
+                else if( (t+(cptHauteur*hauteur+cptLargeur))->etat == C_FLAG )
+                    printf(" F |");
+                else
+                    printf(" %d |",(t+(cptHauteur*hauteur+cptLargeur))->etat);
             }
         }
          printf("\n");
@@ -123,7 +132,7 @@ void createTerrain(caseTerrain* terrain, int hauteur, int largeur, int nbBombe){
     printTerrainTest(terrain,hauteur*largeur,largeur);
 }
 
-int sauvegardeTerrainEncours(caseTerrain* terrain,int hauteur, int largeur){
+int sauvegardeTerrain(caseTerrain* terrain,int hauteur, int largeur){
     FILE* f = fopen(FICH_TAB_ENCOURS, "w");
     if (f == NULL)
         return 1;
@@ -134,45 +143,53 @@ int sauvegardeTerrainEncours(caseTerrain* terrain,int hauteur, int largeur){
     
 }
 
-int afficheTerrainPrecedentTest(int hauteur, int largeur){
+caseTerrain* getTerrain(int taille, char* fichTab){
     int i, j, n = 0;
     
-    FILE* f = fopen(FICH_TAB_PRECEDENT, "r");
+    FILE* f = fopen(fichTab, "r");
     if (f == NULL){
         printf("impossible d'ouvrir le terrain");
-        return 1;
+        return NULL;
     }
     printf("Affichage terrain : \n");
-    caseTerrain* terrain = (caseTerrain*)malloc(sizeof(caseTerrain)*hauteur*largeur);
+    caseTerrain* terrain = (caseTerrain*)malloc(sizeof(caseTerrain)*taille);
     while(fread(terrain + n, 1, sizeof(caseTerrain), f)){
-        
-        //printf("%d-%d ", terrain[n].etat, terrain[n].contenu);
         n++;
     }
-    printTerrainTest(terrain, largeur*hauteur , largeur);
     fclose(f);
+    return terrain;
+}
+
+
+
+int afficheTerrainTest(int hauteur, int largeur, char* fichTab){
+    caseTerrain* terrain = getTerrain(largeur*hauteur,fichTab);
+    if(terrain==NULL)
+        return 1;
+    
+    //printTerrainTest(terrain, largeur*hauteur , largeur);
+    printTerrainJeux(terrain, hauteur , largeur);
+    
     return 0;
     
 }
 
-int afficheTerrainEncoursTest(int hauteur, int largeur){
-    int i, j, n = 0;
+caseTerrain* ouverture(int cx, int cy, int hauteur, int largeur){
     
-    FILE* f = fopen(FICH_TAB_ENCOURS, "r");
-    if (f == NULL){
-        printf("impossible d'ouvrir le terrain");
-        return 1;
-    }
-    printf("Affichage terrain : \n");
-    caseTerrain* terrain = (caseTerrain*)malloc(sizeof(caseTerrain)*hauteur*largeur);
-    while(fread(terrain + n, 1, sizeof(caseTerrain), f)){
-        
-        //printf("%d-%d ", terrain[n].etat, terrain[n].contenu);
-        n++;
-    }
-    printTerrainTest(terrain, largeur*hauteur , largeur);
-    printTerrainJeux(terrain, hauteur , largeur);
-    fclose(f);
-    return 0;
+    caseTerrain* nouveauT = getTerrain(largeur*hauteur,FICH_TAB_ENCOURS);
+    
+    ouvertureCase(nouveauT, cx-65 +1, cy,hauteur);
+    
+    return nouveauT;
+    
+}
+
+caseTerrain* mettreflague (int cx, int cy, int hauteur, int largeur){
+    
+    caseTerrain* nouveauT = getTerrain(largeur*hauteur,FICH_TAB_ENCOURS);
+    
+    ouvertureCase(nouveauT, cx, cy,largeur);
+    
+    return nouveauT;
     
 }
