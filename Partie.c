@@ -6,7 +6,7 @@
 //
 #include<stdio.h>
 #include<stdlib.h>
-#include<time.h>
+#include<ctype.h>
 
 #include "Demineur.h"
 
@@ -64,6 +64,7 @@ int tour()
     
     printf("Saisir la colonne :");
     scanf("%c", &caseX);
+    caseX = toupper(caseX); //toupper() va forcer la majuscule pour eviter les bugs
     CLEAR_BUFFER;
     printf("Saisir la ligne : ");
     scanf("%d", &caseY);
