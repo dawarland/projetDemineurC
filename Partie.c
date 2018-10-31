@@ -10,9 +10,6 @@
 
 #include "Demineur.h"
 
-int* hauteurTerrain ;//= (int)malloc(sizeof(int)));
-int* largeurTerrain ;//= (int)malloc(sizeof(int)));
-
 void affichageMenu()
 /*Fonction qui affiche le menu démarrage*/
 {
@@ -74,15 +71,15 @@ int tour()
     
     switch (act){
     
-        case 1: nouveauT = ouverture(caseX, caseY, (*hauteurTerrain), (*largeurTerrain));
+        case 1: nouveauT = ouverture(caseX, caseY);
             break;
-        case 2: nouveauT = mettreflague(caseX, caseY, (*hauteurTerrain), (*largeurTerrain));
+        case 2: nouveauT = mettreflague(caseX, caseY);
             break;
         default:
             break;
     }
                                                  
-    sauvegardeTerrain(nouveauT, (*hauteurTerrain), (*largeurTerrain));
+    sauvegardeTerrain(nouveauT);
     return 0;
 }
 
@@ -113,11 +110,11 @@ void nouvellePartie()
     
     caseTerrain* terrain= (caseTerrain*)malloc(sizeof(caseTerrain)*hauteur*largeur);
     
-    createTerrain(terrain, hauteur, largeur, nbBombe);
-    sauvegardeTerrain(terrain, hauteur, largeur );
+    createTerrain(terrain,nbBombe);
+    sauvegardeTerrain(terrain);
     do{
         
-        afficheTerrainTest((*hauteurTerrain), (*largeurTerrain), FICH_TAB_ENCOURS);
+        afficheTerrainTest(FICH_TAB_ENCOURS);
         if(tour())
             break;
         

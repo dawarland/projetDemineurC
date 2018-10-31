@@ -37,24 +37,27 @@ void printTab(int* t, int n)
     else
         printf("\n");
 }
-void printTerrainTest(caseTerrain* t, int taille, int largeur)
+void printTerrainTest(caseTerrain* t, int taille)
 /*Fonction qui affiche un terrain (pour les tests)*/
 {
+    int largeur = *largeurTerrain;
     if ( taille%largeur==0)
         printf("\n");
     
     if ( taille> 0)
     {
         printf("%d-%d(%d:%d) ", t->etat, t->contenu, t->posX, t->posY);
-        printTerrainTest(t + 1, taille - 1, largeur);
+        printTerrainTest(t + 1, taille - 1);
     }
     else
         printf("\n");
 }
 
-void printTerrainJeux(caseTerrain* t, int hauteur, int largeur)
+void printTerrainJeux(caseTerrain* t)
 /*Fonction qui affiche un terrain pour la partie*/
 {
+    int largeur = *largeurTerrain;
+    int hauteur = *hauteurTerrain;
     int cptLargeur;
     int cptHauteur;
     for(cptHauteur=-2;cptHauteur<hauteur; cptHauteur++){
@@ -91,45 +94,6 @@ void printTerrainJeux(caseTerrain* t, int hauteur, int largeur)
     
 }
 
-/*void printTerrainJeux(caseTerrain* t, int hauteur, int largeur)
-Fonction qui affiche un terrain pour la partie
-{
-    int cptLargeur;
-    int cptHauteur;
-    for(cptHauteur=-2;cptHauteur<hauteur; cptHauteur++){
-        if(cptHauteur==-2){
-            printf("   |");
-            for(cptLargeur=0;cptLargeur<largeur; cptLargeur++){
-                printf(" %c |",cptLargeur+65);
-            }
-        }
-        else if(cptHauteur==-1){
-            printf("----");
-            for(cptLargeur=0;cptLargeur<largeur; cptLargeur++){
-                printf("----");
-            }
-        }
-        else{
-            printf(" %d |", cptHauteur);
-            for(cptLargeur=0;cptLargeur<largeur; cptLargeur++){
-                if( (t+(cptHauteur*hauteur+cptLargeur))->etat == C_OUVERTE){
-                    if( (t+(cptHauteur*hauteur+cptLargeur))->contenu == C_BOMBE)
-                        printf(" B |");
-                    else
-                        printf(" %d |",(t+(cptHauteur*hauteur+cptLargeur))->contenu);
-                }
-                else if( (t+(cptHauteur*hauteur+cptLargeur))->etat == C_FLAG )
-                    printf(" F |");
-                else
-                    //printf(" %d |",(t+(cptHauteur*hauteur+cptLargeur))->etat);
-                    printf(" # |");
-            }
-        }
-         printf("\n");
-    }
-    
-}*/
-
 void melangeTabBombe(int* t, int n)
 /*fonction qui melange le tableau de bombe*/
 {
@@ -146,33 +110,36 @@ void melangeTabBombe(int* t, int n)
         *(t+j) = temp;
     }
 }
-void createTerrain(caseTerrain* terrain, int hauteur, int largeur, int nbBombe){
+void createTerrain(caseTerrain* terrain, int nbBombe){
+    int largeur = *largeurTerrain;
+    int hauteur = *hauteurTerrain;
     int i, j;
-    int cptBombe =0;
+    int cptCase =0;
     int taille = hauteur*largeur;
     int* tab = (int*)malloc(sizeof(int)*taille);
     
     initTabBombe(tab,taille, nbBombe);//initialisation d'un tableau avec le bon nombre de bombe
     printTab(tab, taille);//affichage pour les tests
-    melangeTabBombe(tab,taille);//on melange le tableau de bombe aléatoirement
+    //melangeTabBombe(tab,taille);//on melange le tableau de bombe aléatoirement
     printTab(tab, taille);//affichage pour les tests
     
     /*On prend les elements du tableau de bombe melange pour remplir le terrain*/
     for(i=0;i<hauteur;i++){
         for(j=0;j<largeur;j++){
-            (terrain+cptBombe)->posX=j;
-            (terrain+cptBombe)->posY=i;
-            (terrain+cptBombe)->etat=C_FERMEE;
-            (terrain+cptBombe)->contenu= *(tab+cptBombe);
-            cptBombe++;
+            (terrain+cptCase)->posX=j;
+            (terrain+cptCase)->posY=i;
+            (terrain+cptCase)->etat=C_FERMEE;
+            (terrain+cptCase)->contenu= *(tab+cptCase);
+            cptCase++;
         }
     }
-    
     printf("Terrain crée\n");//message pour les tests
-    printTerrainTest(terrain,hauteur*largeur,largeur);
+    printTerrainTest(terrain,hauteur*largeur);
 }
 
-int sauvegardeTerrain(caseTerrain* terrain,int hauteur, int largeur){
+int sauvegardeTerrain(caseTerrain* terrain){
+    int largeur = *largeurTerrain;
+    int hauteur = *hauteurTerrain;
     FILE* f = fopen(FICH_TAB_ENCOURS, "w+");
     if (f == NULL)
         return 1;
@@ -202,33 +169,35 @@ caseTerrain* getTerrain(int taille, char* fichTab){
 
 
 
-int afficheTerrainTest(int hauteur, int largeur, char* fichTab){
+int afficheTerrainTest(char* fichTab){
+    int largeur = *largeurTerrain;
+    int hauteur = *hauteurTerrain;
     caseTerrain* terrain = getTerrain(largeur*hauteur,fichTab);
     if(terrain==NULL)
         return 1;
     
-    //printTerrainTest(terrain, largeur*hauteur , largeur);
-    printTerrainJeux(terrain, hauteur , largeur);
+    //printTerrainTest(terrain, largeur*hauteur);
+    printTerrainJeux(terrain);
     
     return 0;
     
 }
 
-caseTerrain* ouverture(int cx, int cy, int hauteur, int largeur){
-    
+caseTerrain* ouverture(int cx, int cy){
+    int largeur = *largeurTerrain;
+    int hauteur = *hauteurTerrain;
     caseTerrain* nouveauT = getTerrain(largeur*hauteur,FICH_TAB_ENCOURS);
-    
-    ouvertureCase(nouveauT, cx-64, cy,hauteur);
+    ouvertureCase(nouveauT, cx-65, cy);
     
     return nouveauT;
     
 }
 
-caseTerrain* mettreflague (int cx, int cy, int hauteur, int largeur){
-    
+caseTerrain* mettreflague (int cx, int cy){
+    int largeur = *largeurTerrain;
+    int hauteur = *hauteurTerrain;
     caseTerrain* nouveauT = getTerrain(largeur*hauteur,FICH_TAB_ENCOURS);
-    
-    ouvertureCase(nouveauT, cx-65, cy,largeur);
+    flagCase(nouveauT, cx-65, cy);
     
     return nouveauT;
     

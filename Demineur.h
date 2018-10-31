@@ -33,6 +33,8 @@
 #define CLEAR_BUFFER while((clearbuffer = getchar()) != '\n' && clearbuffer != EOF )
 
 char clearbuffer;
+int* hauteurTerrain ;//= (int)malloc(sizeof(int)));
+int* largeurTerrain ;//= (int)malloc(sizeof(int)));
 
 typedef struct caseTerrain
 {
@@ -43,23 +45,24 @@ typedef struct caseTerrain
 }caseTerrain;
 
 //fonction pour caseTerrain
-void ouvertureCase(caseTerrain* terrain, int pX, int pY,int hauteur);
-void flagCase(caseTerrain* terrain, int pX, int pY,int hauteur);
-int verifCaseMode(int mode, caseTerrain* terrain, int pX, int pY, int largeur);
-int nbBombeAdjacente(caseTerrain* terrain, int pX, int pY, int hauteur, int largeur);
+void ouvertureCase(caseTerrain* terrain, int pX, int pY);
+void flagCase(caseTerrain* terrain, int pX, int pY);
+int verifCaseMode(int mode, caseTerrain* terrain, int pX, int pY);
+int nbBombeAdjacente(caseTerrain* terrain, int pX, int pY);
+int caseValide(int pX, int pY);
 
 //fonction pour Terrain
 void initTabBombe(int* t, int n, int nbbombe);
 void printTab(int* t, int n);
-void printTerrainTest(caseTerrain* t, int taille, int largeur);
-void printTerrainJeux(caseTerrain* t, int hauteur, int largeur);
+void printTerrainTest(caseTerrain* t, int taille);
+void printTerrainJeux(caseTerrain* t);
 void melangeTabBombe(int* t, int n);
-void createTerrain(caseTerrain* terrain, int hauteur, int largeur, int nbBombe);
-int sauvegardeTerrain(caseTerrain* terrain,int hauteur, int largeur);
-int afficheTerrainTest(int hauteur, int largeur, char* fichTab);
+void createTerrain(caseTerrain* terrain, int nbBombe);
+int sauvegardeTerrain(caseTerrain* terrain);
+int afficheTerrainTest(char* fichTab);
 caseTerrain* getTerrain(int taille, char* fichTab);
-caseTerrain* ouverture(int cx, int cy, int hauteur, int largeur);
-caseTerrain* mettreflague(int cx, int cy, int hauteur, int largeur);
+caseTerrain* ouverture(int cx, int cy);
+caseTerrain* mettreflague(int cx, int cy);
 
 //fonction pour Partie
 void affichageMenu(void);
