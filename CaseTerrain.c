@@ -2,6 +2,7 @@
 #include<stdlib.h>
 #include<ctype.h>
 
+
 #include "Demineur.h"
 
 void ouvertureCase(caseTerrain* terrain, int pX, int pY)
