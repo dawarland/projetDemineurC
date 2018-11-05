@@ -196,9 +196,8 @@ void createTerrain(caseTerrain* terrain, int nbBombe)
     }
     
     initNbBombe(terrain);//On incremente le contenu des case voisines d'une bombe
-    
-    //printf("Terrain crée\n");//message pour les tests
-    printTerrainTest(terrain,hauteur*largeur);
+
+    //printTerrainTest(terrain,hauteur*largeur);
 }
 
 int sauvegardeHL()
@@ -214,7 +213,7 @@ int sauvegardeHL()
     fprintf(f, "%d %d", hauteur, largeur);
     
     fclose(f);
-    printf("Hauteur Largeur Sauvegardes\n");
+    //printf("Hauteur Largeur Sauvegardes\n");
     return 0;
 }
 
@@ -232,7 +231,7 @@ int getHL()
         return 1;
     
     fscanf(f, "%d %d", &hl[0], &hl[1]);
-    printf("hauteur = %d, largeur = %d \n", hl[0], hl[1]);
+    //printf("hauteur = %d, largeur = %d \n", hl[0], hl[1]);
     
     *hauteurTerrain = hl[0];
     *largeurTerrain = hl[1];
@@ -252,7 +251,7 @@ int sauvegardeTerrain(caseTerrain* terrain, char* fichTab)
         return 1;
     fwrite(terrain, 1, sizeof(caseTerrain)*hauteur*largeur, f);
     fclose(f);
-    printf("Terrain sauvegardé\n");
+    //printf("Terrain sauvegardé\n");
     return 0;
     
 }
@@ -267,7 +266,7 @@ caseTerrain* getTerrain(int taille, char* fichTab)
         printf("impossible d'ouvrir le terrain\n");
         return NULL;
     }
-    printf("la taille est %d\n",taille);
+    //printf("la taille est %d\n",taille);
     
     caseTerrain* terrain = (caseTerrain*)malloc(sizeof(caseTerrain)*taille);
     while(fread(terrain + n, 1, sizeof(caseTerrain)*taille, f)){
