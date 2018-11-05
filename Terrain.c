@@ -204,11 +204,14 @@ void createTerrain(caseTerrain* terrain, int nbBombe)
 int sauvegardeHL()
 /*Fonction qui sauvegarde les dimensions du terrain*/
 {
+    int largeur = *largeurTerrain;
+    int hauteur = *hauteurTerrain;
+    
     FILE* f = fopen(FICH_HAU_LAR, "w+");
     if (f == NULL)
         return 1;
     
-    fprintf(f, "%d %d", (*hauteurTerrain), (*largeurTerrain));
+    fprintf(f, "%d %d", hauteur, largeur);
     
     fclose(f);
     printf("Hauteur Largeur Sauvegardes\n");
@@ -216,19 +219,23 @@ int sauvegardeHL()
 }
 
 int getHL()
-/*Fonction qui recupere les dimensions du terrain*/
+/*Fonction qui recupere les dimensions du terrain
+ *
+ *Cette fonction n a finalement pas ete utilise car les pointeurs
+ *n arrivaient plus a retrouver le tab hl
+ */
 {
     int hl[3] = {0};
     
     FILE* f = fopen(FICH_HAU_LAR, "r");
     if (f == NULL)
         return 1;
-
+    
     fscanf(f, "%d %d", &hl[0], &hl[1]);
     printf("hauteur = %d, largeur = %d \n", hl[0], hl[1]);
     
-    hauteurTerrain = &hl[0];
-    largeurTerrain = &hl[1];
+    *hauteurTerrain = hl[0];
+    *largeurTerrain = hl[1];
     
     fclose(f);
     return 0;
@@ -257,11 +264,13 @@ caseTerrain* getTerrain(int taille, char* fichTab)
     
     FILE* f = fopen(fichTab, "r");
     if (f == NULL){
-        printf("impossible d'ouvrir le terrain");
+        printf("impossible d'ouvrir le terrain\n");
         return NULL;
     }
+    printf("la taille est %d\n",taille);
+    
     caseTerrain* terrain = (caseTerrain*)malloc(sizeof(caseTerrain)*taille);
-    while(fread(terrain + n, 1, sizeof(caseTerrain), f)){
+    while(fread(terrain + n, 1, sizeof(caseTerrain)*taille, f)){
         n++;
     }
     fclose(f);
@@ -271,7 +280,9 @@ caseTerrain* getTerrain(int taille, char* fichTab)
 void transferTerrain(char* fichACopier, char* fichDestination)
 /*permet de mettre le contenu d'un fichier terrain dans un autre*/
 {
-    sauvegardeTerrain( getTerrain( (*hauteurTerrain)*(*largeurTerrain) , fichACopier) , fichDestination);
+    int largeur = *largeurTerrain;
+    int hauteur = *hauteurTerrain;
+    sauvegardeTerrain( getTerrain( hauteur*largeur , fichACopier) , fichDestination);
 }
 
 int afficheTerrainJeux(char* fichTab)
@@ -283,7 +294,8 @@ int afficheTerrainJeux(char* fichTab)
     int largeur = *largeurTerrain;
     int hauteur = *hauteurTerrain;
     
-    caseTerrain* terrain = getTerrain(largeur*hauteur,fichTab);
+    //caseTerrain* terrain = getTerrain( largeur*hauteur ,fichTab);
+    caseTerrain* terrain = getTerrain( largeur*hauteur ,fichTab);
     if(terrain==NULL)
         return 2;
     

@@ -126,19 +126,36 @@ int tour()
     return 0;
 }
 
+
 void continuerPartie()
 /* Pour continuer une partie non termine*/
 {
-    getHL(); //on récupere les dimensions de notre ancien terrain
-    /*caseTerrain* terrain= (caseTerrain*)malloc(sizeof(caseTerrain)*(*hauteurTerrain)*(*largeurTerrain));
-    getTerrain*/
-    do{
+    int hl[3] = {0};
         
-        afficheTerrainJeux(FICH_TAB_ENCOURS);
-        if(tour())
-            break;
+    FILE* f = fopen(FICH_HAU_LAR, "r");
+    if (f == NULL){
+        printf("Impossible de lire le fichier");
+    }
+        fscanf(f, "%d %d", &hl[0], &hl[1]);
+        printf("hauteur = %d, largeur = %d \n", hl[0], hl[1]);
         
-    }while (1);
+        hauteurTerrain = &hl[0];
+        largeurTerrain = &hl[1];
+        
+    fclose(f);
+    
+    caseTerrain* terrain =  getTerrain( (*hauteurTerrain) * (*largeurTerrain) , FICH_TAB_ENCOURS);
+    transferTerrain( FICH_TAB_ENCOURS, FICH_TAB_PRECEDENT);
+    
+    if (terrain!= NULL){
+        do{
+            
+            if(tour())
+                break;
+            
+        }while (1);
+    }
+    
 }
 
 void nouvellePartie()
@@ -174,13 +191,15 @@ void nouvellePartie()
             break;
         
     }while (1);
+    
+    free(terrain);
+    remove(FICH_TAB_PRECEDENT);
 
 }
 
 void play()
 /*Debut du jeu*/
 {
-    
     int choix = menu();
     
     switch(choix){

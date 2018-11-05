@@ -101,5 +101,5 @@ void plus1CasesVoisines(caseTerrain* terrain, int pX, int pY)
 int caseValide(int pX, int pY)
 /* fonction qui retourne 1 si la case est valide, soit si elle est bien dans le terrain */
 {
-    return ( pX >= 0 && pX < *largeurTerrain && pY >= 0 && pY < *hauteurTerrain);
+    return ( pX >= 0 && pX < (*largeurTerrain) && pY >= 0 && pY < (*hauteurTerrain));
 }
