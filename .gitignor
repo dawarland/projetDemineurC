@@ -1,2 +1,3 @@
-#ignore file ~x.x
+#ignore file 
+~x.x
 ./*.*~
