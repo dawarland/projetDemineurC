@@ -2,7 +2,9 @@
 Projet licence ACSID
 Programmation d'un démineur
 
-Faire : " gcc -c *.c ; gcc -o prog *.o ; ./prog " pour lancer le code.
+//Faire : " gcc -c *.c ; gcc -o prog *.o ; ./prog " pour lancer le code.
+make clean
+make all
 
 Menu au démarrage :
 
