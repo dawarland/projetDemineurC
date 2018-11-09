@@ -30,7 +30,7 @@ int menu()
 {
     int choix;
     affichageMenu();
-    scanf("%d\n",&choix);
+    scanf("%d",&choix);
     CLEAR_BUFFER;
     return choix;
 }

@@ -6,13 +6,13 @@ prog: main.o CaseTerrain.o Partie.o Terrain.o
 main.o: main.c
 	gcc -c main.c
 
-CaseTerrain.o: CaseTerrain.c
+CaseTerrain.o: CaseTerrain.c Demineur.h
 	gcc -c CaseTerrain.c
 
-Partie.o: Partie.c
+Partie.o: Partie.c Demineur.h
 	gcc -c Partie.c
 
-Terrain.o: Terrain.c
+Terrain.o: Terrain.c Demineur.h
 	gcc -c Terrain.c
 
 clean: 
